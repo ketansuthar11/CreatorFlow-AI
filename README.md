@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Content Factory
 
-## Getting Started
+Telegram-driven video processing and YouTube publishing, with separate YouTube channels for each Telegram user.
 
-First, run the development server:
+## User flow
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. A Telegram user sends `/connect` and opens the one-time Google authorization link.
+2. The authorized YouTube channel is saved only under that Telegram user. Repeat `/connect` to add more channels.
+3. The user sends a supported YouTube or Instagram URL, chooses a destination channel, then selects Public, Private, or Unlisted.
+4. The bot processes the video, uploads using that channel's OAuth credentials, refreshes those credentials when required, and records the upload status.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Useful Telegram commands:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `/start` — show the onboarding message.
+- `/connect` — connect another YouTube channel (the link expires after 10 minutes).
+- `/channels` — list the caller's connected channels.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Required setup
 
-## Learn More
+1. Copy `.env.example` to `.env` and set the variables.
+2. In Google Cloud Console, add `APP_URL/api/auth/youtube/callback` as an authorized OAuth redirect URI. `APP_URL` must be the public HTTPS address of this running app; Telegram users must be able to open it.
+3. Put the Google OAuth web-client JSON at `credentials/client_secret.json`.
+4. Apply the database migration and generate Prisma:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npx prisma migrate deploy
+   npx prisma generate
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Start the app with `npm run dev` (or your production process).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The bot uses long polling, so run only one application instance for a given `TELEGRAM_BOT_TOKEN`.
 
-## Deploy on Vercel
+## Security notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+OAuth state is stored in the database and expires after 10 minutes, binding each authorization to the Telegram user who requested it. Never commit `.env` or `credentials/`. YouTube refresh tokens are stored in the database; use database encryption at rest and a restricted database account in production.
