@@ -2,6 +2,7 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import fs from "fs";
+import ytDlp from "yt-dlp-exec";
 
 const execFileAsync = promisify(execFile);
 
@@ -24,23 +25,18 @@ export const downloadVideo = async (
         "%(title)s.%(ext)s"
     );
 
-    const ytDlpPath = path.join(
-        process.cwd(),
-        "bin",
-        "yt-dlp.exe"
-    );
+    const isWindows = process.platform === "win32";
+    const { stdout, stderr } = isWindows
+        ? await execFileAsync(
+            path.join(process.cwd(), "bin", "yt-dlp.exe"),
+            [url, "-o", outputTemplate]
+        )
+        : await ytDlp.exec(url, {
+            output: outputTemplate,
+            noPlaylist: true,
+        });
 
-    console.log("Using:", ytDlpPath);
-
-    const { stdout, stderr } =
-        await execFileAsync(
-            ytDlpPath,
-            [
-                url,
-                "-o",
-                outputTemplate
-            ]
-        );
+    console.log(`Using ${isWindows ? "the Windows" : "the Linux"} yt-dlp binary.`);
 
     console.log(stdout);
     console.log(stderr);

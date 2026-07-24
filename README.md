@@ -51,6 +51,10 @@ Before going live:
 4. Add `APP_URL/api/auth/youtube/callback` to the Google OAuth client's authorized redirect URIs.
 5. Confirm `https://YOUR_DOMAIN/api/health` returns `{ "status": "ok" }` and test `/connect` in Telegram.
 
+`yt-dlp.exe` is used only during local Windows development. Render uses the
+Linux binary installed by `yt-dlp-exec` during `npm ci`, so do not replace it
+with the Windows executable in production.
+
 The bot uses long polling, so run only one application instance for a given `TELEGRAM_BOT_TOKEN`.
 
 ## Security notes
