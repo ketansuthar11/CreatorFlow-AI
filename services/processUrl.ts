@@ -2,7 +2,6 @@ import path from "path";
 import { mkdir } from "fs/promises";
 
 import { downloadVideo } from "./downloadVideo";
-import { rewriteTitle } from "./rewriteTitle";
 import { processVideo } from "./processVideo";
 
 import { cleanTitle } from "@/utils/cleanTitle";

@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 import { google } from "googleapis";
 
-const credentials = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "credentials", "client_secret.json"), "utf-8")
-);
+const rawCredentials = process.env.GOOGLE_OAUTH_CLIENT_SECRET_JSON
+  ?? fs.readFileSync(path.join(process.cwd(), "credentials", "client_secret.json"), "utf-8");
+const credentials = JSON.parse(rawCredentials);
 const { client_id, client_secret, redirect_uris } = credentials.web;
 
 export const YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload";
