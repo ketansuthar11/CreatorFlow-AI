@@ -1,14 +1,17 @@
 import path from "path";
 import ffmpeg from "@/lib/ffmpeg";
-
+import fs from "fs"
 export const processVideo = async (
     inputPath: string,
-    outputPath: string
+    outputPath: string,
+    titleImagePath: string
 ) => {
+    console.log("Title Image Path:", titleImagePath);
+console.log("Exists:", fs.existsSync(titleImagePath));
     return new Promise((resolve, reject) => {
         ffmpeg(inputPath)
             .input(path.join(process.cwd(), "logos", "logo.png"))
-            .input(path.join(process.cwd(), "generated", "title.png"))
+            .input(titleImagePath)
             .complexFilter([
                 "[1:v]scale=130:-1[logo]",
                 "[2:v]scale=300:-1[title]",

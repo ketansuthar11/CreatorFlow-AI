@@ -1,6 +1,6 @@
 import path from "path";
 import { mkdir } from "fs/promises";
-
+import fs from "fs";
 import { downloadVideo } from "./downloadVideo";
 import { processVideo } from "./processVideo";
 
@@ -35,11 +35,13 @@ export const processUrl = async (
 
     console.log("4️⃣ Generating image...");
     await onProgress?.("🖼️ Creating Title Image...");
-    await generateTitleImage(
+    const imagePath = await generateTitleImage(
         metadata.imageTitle,
         metadata.greenWords,
         metadata.redWords
     );
+    console.log("Image path:", imagePath);
+    console.log("Exists after generation:", fs.existsSync(imagePath));
     console.log("✅ Image Generated");
 
     // Processed folder
@@ -63,7 +65,8 @@ export const processUrl = async (
     // Process video
     await processVideo(
         filePath,
-        outputPath
+        outputPath,
+        imagePath
     );
     console.log("✅ Video Processed");
     await onProgress?.("⬆️ Uploading to YouTube...");

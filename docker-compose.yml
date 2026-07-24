@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  creatorflow:
+    build: .
+    container_name: creatorflow-ai
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./downloads:/app/downloads
+      - ./processed:/app/processed
+      - ./generated:/app/generated
+      - ./uploads:/app/uploads

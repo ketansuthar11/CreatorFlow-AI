@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+
+downloads
+processed
+generated
+uploads
+
+
+
+
+npm-debug.log
+
+Dockerfile
+docker-compose.yml

@@ -2,7 +2,6 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import fs from "fs";
-import ytDlp from "yt-dlp-exec";
 
 const execFileAsync = promisify(execFile);
 
@@ -40,10 +39,12 @@ export const downloadVideo = async (
         console.log(stdout);
         console.log(stderr);
     } else {
-        await ytDlp(url, {
-            output: outputTemplate,
-            noPlaylist: true,
-        });
+        await execFileAsync("yt-dlp", [
+            url,
+            "--output",
+            outputTemplate,
+            "--no-playlist",
+        ]);
 
         console.log("Linux download completed.");
     }
