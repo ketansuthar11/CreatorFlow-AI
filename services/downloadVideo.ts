@@ -26,20 +26,30 @@ export const downloadVideo = async (
     );
 
     const isWindows = process.platform === "win32";
-    const { stdout, stderr } = isWindows
-        ? await execFileAsync(
+
+    console.log(
+        `Using ${isWindows ? "Windows" : "Linux"} yt-dlp`
+    );
+
+    if (isWindows) {
+        const { stdout, stderr } = await execFileAsync(
             path.join(process.cwd(), "bin", "yt-dlp.exe"),
             [url, "-o", outputTemplate]
-        )
-        : await ytDlp.exec(url, {
+        );
+
+        console.log(stdout);
+        console.log(stderr);
+    } else {
+        await ytDlp(url, {
             output: outputTemplate,
             noPlaylist: true,
         });
 
+        console.log("Linux download completed.");
+    }
+
     console.log(`Using ${isWindows ? "the Windows" : "the Linux"} yt-dlp binary.`);
 
-    console.log(stdout);
-    console.log(stderr);
 
     const files =
         fs.readdirSync(downloadDir);
