@@ -3,7 +3,13 @@ services:
     name: ai-content-factory
     runtime: node
     plan: starter
-    buildCommand: npm ci && npx prisma generate && npm run build
+    buildCommand: |
+      python3 --version
+      pip3 --version
+      ffmpeg -version
+      npm ci
+      npx prisma generate
+      npm run build
     preDeployCommand: npx prisma migrate deploy
     startCommand: npm run start
     healthCheckPath: /api/health
