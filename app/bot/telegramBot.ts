@@ -16,6 +16,11 @@ function canUseTelegramUrlButton(url: string) {
 }
 
 type PendingUpload = { url: string; channelId?: string };
+type ChannelSummary = {
+  id: string;
+  name: string;
+  channelTitle: string | null;
+};
 const pendingUploads = new Map<number, PendingUpload>();
 
 function isSupportedUrl(text: string) {
@@ -48,7 +53,7 @@ if (!(global as typeof globalThis & { telegramBot?: TelegramBot }).telegramBot) 
       return void bot.sendMessage(chatId, "Welcome! Use /connect to add a YouTube channel, then send a YouTube or Instagram URL to upload it.");
     }
     if (text === "/channels") {
-      const channels = await prisma.channel.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
+      const channels: ChannelSummary[] = await prisma.channel.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
       return void bot.sendMessage(chatId, channels.length ? `Your channels:\n${channels.map((channel) => `• ${channel.channelTitle ?? channel.name}`).join("\n")}` : "No channels connected. Use /connect first.");
     }
     if (text === "/connect") {
@@ -77,7 +82,7 @@ if (!(global as typeof globalThis & { telegramBot?: TelegramBot }).telegramBot) 
       return void bot.sendMessage(chatId, "Send a YouTube or Instagram URL. Commands: /connect, /channels");
     }
 
-    const channels = await prisma.channel.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
+    const channels: ChannelSummary[] = await prisma.channel.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
     if (!channels.length) return void bot.sendMessage(chatId, "Connect a YouTube channel first with /connect.");
     pendingUploads.set(chatId, { url: text });
     return void bot.sendMessage(chatId, "Choose the destination channel:", {

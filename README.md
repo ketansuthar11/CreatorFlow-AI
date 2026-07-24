@@ -34,7 +34,7 @@ Useful Telegram commands:
 
 ## Production deployment
 
-This app is configured for a Render Web Service that deploys directly from GitHub.
+This app is configured for a Docker-based Render Web Service that deploys directly from GitHub.
 It needs a long-running Node.js service and PostgreSQL database: it cannot run
 correctly on serverless hosting because the Telegram bot uses long polling and
 video processing uses local files. The included `render.yaml` builds the app,
@@ -51,9 +51,9 @@ Before going live:
 4. Add `APP_URL/api/auth/youtube/callback` to the Google OAuth client's authorized redirect URIs.
 5. Confirm `https://YOUR_DOMAIN/api/health` returns `{ "status": "ok" }` and test `/connect` in Telegram.
 
-`yt-dlp.exe` is used only during local Windows development. Render uses the
-Linux binary installed by `yt-dlp-exec` during `npm ci`, so do not replace it
-with the Windows executable in production.
+`yt-dlp.exe` is used only during local Windows development. The Docker image
+installs the Linux `yt-dlp` binary and FFmpeg for production, so do not replace
+the Windows executable in production.
 
 The bot uses long polling, so run only one application instance for a given `TELEGRAM_BOT_TOKEN`.
 

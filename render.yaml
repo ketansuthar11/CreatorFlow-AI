@@ -1,17 +1,12 @@
 services:
   - type: web
     name: ai-content-factory
-    runtime: node
+    # Docker provides ffmpeg, yt-dlp, and Canvas' native system libraries.
+    runtime: docker
     plan: starter
-    buildCommand: |
-      python3 --version
-      pip3 --version
-      ffmpeg -version
-      npm ci
-      npx prisma generate
-      npm run build
+    dockerfilePath: ./Dockerfile
+    dockerCommand: npm run start
     preDeployCommand: npx prisma migrate deploy
-    startCommand: npm run start
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
