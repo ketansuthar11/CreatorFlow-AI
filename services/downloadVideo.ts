@@ -39,12 +39,32 @@ export const downloadVideo = async (
         console.log(stdout);
         console.log(stderr);
     } else {
-        await execFileAsync("yt-dlp", [
-            url,
+        const cookiesPath = path.join(
+            process.cwd(),
+            "cookies.txt"
+        );
+
+        const args = [
+            "--cookies",
+            cookiesPath,
+            "--impersonate",
+            "chrome",
+            "--no-playlist",
             "--output",
             outputTemplate,
-            "--no-playlist",
-        ]);
+            url,
+        ];
+
+        const { stdout, stderr } = await execFileAsync(
+            "yt-dlp",
+            args
+        );
+
+        console.log(stdout);
+
+        if (stderr) {
+            console.log(stderr);
+        }
 
         console.log("Linux download completed.");
     }
