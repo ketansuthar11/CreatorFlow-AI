@@ -3,6 +3,7 @@ import { groq } from "@/lib/groq";
 export const generateMetadata = async (
     originalTitle: string
 ) => {
+    console.log("Generating Meta Data")
     const response =
         await groq.chat.completions.create({
             model:
@@ -65,6 +66,7 @@ Return ONLY valid JSON.
     const content =
         response.choices[0].message
             .content;
+    console.log(content);
 
     if (!content) {
         throw new Error(
@@ -72,5 +74,11 @@ Return ONLY valid JSON.
         );
     }
 
-    return JSON.parse(content);
+    const cleaned = content
+        .trim()
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "");
+
+    return JSON.parse(cleaned);
 };
